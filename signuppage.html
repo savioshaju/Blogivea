@@ -19,14 +19,101 @@
                     <h1 class="display-4 fw-bold text-info">Sign Up</h1>
                 </div>
                 <form action="" method="post" onsubmit="return validateForm()">
+                    <div class="form-floating mb-3">
+                        <input type="text" autocomplete="username" class="form-control" id="floatingUsername"
+                            name="username" placeholder="Enter username">
+                        <label for="floatingUsername">User Name</label>
+                    </div>
+                    <div id="usernameerror" class="container pb-2"></div>
 
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingEmail" placeholder="name@example.com">
+                        <label for="floatingEmail">Email address</label>
+                    </div>
+                    <div id="emailerror" class="container pb-2"></div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                        <label for="floatingPassword">Password</label>
+                    </div>
+                    <div id="passworderror" class="container pb-2"></div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="floatingConfirmPassword"
+                            placeholder="Confirm Password">
+                        <label for="floatingConfirmPassword">Confirm Password</label>
+                    </div>
+                    <div id="confirmpassworderror" class="container pb-2"></div>
+                    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
                 </form>
                 <div class="card-footer bg-white">
                     Already have an account? <a href="./loginpage.html" class="btn text-primary p-1">Log in
                     </a>
                 </div>
                 <script>
+                    const validateForm = () => {
+                        const username = document.getElementById('floatingUsername').value.trim()
+                        const usernameinput = document.getElementById('floatingUsername')
+                        const email = document.getElementById('floatingEmail').value.trim()
+                        const emailinput = document.getElementById('floatingEmail')
+                        const password = document.getElementById('floatingPassword').value.trim()
+                        const passwordinput = document.getElementById('floatingPassword')
+                        const confirmpassword = document.getElementById('floatingConfirmPassword').value.trim()
+                        const confirmpasswordinput = document.getElementById('floatingConfirmPassword')
+                        const usernameerror = document.getElementById('usernameerror')
+                        const emailerror = document.getElementById('emailerror')
+                        const passworderror = document.getElementById('passworderror')
+                        const confirmpassworderror = document.getElementById('confirmpassworderror')
+                        usernameerror.textContent = '';
+                        emailerror.textContent = '';
+                        passworderror.textContent = '';
+                        confirmpassworderror.textContent = '';
+                        usernameerror.style.color = '';
+                        emailerror.style.color = '';
+                        passworderror.style.color = '';
+                        confirmpassworderror.style.color = '';
+                        usernameinput.style.border = ''
+                        emailinput.style.border = ''
+                        passwordinput.style.border = ''
+                        confirmpasswordinput.style.border = ''
+                        let valid = true;
+                        if (!username) {
+                            usernameerror.textContent = 'Please enter your username.';
+                            usernameerror.style.color = 'red';
+                            usernameinput.style.border = '1px solid red'
+                            valid = false;
+                        }
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!email || !emailRegex.test(email)) {
+                            emailerror.textContent = 'Enter a valid email address.';
+                            emailerror.style.color = 'red';
+                            emailinput.style.border = '1px solid red';
+                            valid = false;
+                        }
 
+                        if (!password) {
+                            passworderror.textContent = 'Please enter your password.';
+                            passworderror.style.color = 'red';
+                            passwordinput.style.border = '1px solid red'
+                            valid = false;
+                        }
+                        if (!confirmpassword) {
+                            confirmpassworderror.textContent = 'Please confirm your password.';
+                            confirmpassworderror.style.color = 'red';
+                            confirmpasswordinput.style.border = '1px solid red';
+                            valid = false;
+                        } else {
+                            if (password != confirmpassword) {
+                                confirmpassworderror.textContent = 'Passwords do not match.';
+                                passworderror.style.color = 'red';
+                                passwordinput.style.border = '1px solid red'
+                                confirmpassworderror.style.color = 'red';
+                                confirmpasswordinput.style.border = '1px solid red';
+                                valid = false;
+                            }
+
+                        }
+                        return valid
+                    }
                 </script>
             </div>
         </div>
