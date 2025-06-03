@@ -24,35 +24,50 @@
                             name="username" placeholder="Enter username">
                         <label for="floatingUsername">User Name</label>
                     </div>
+                    <div id="usernameerror" class="container pb-2"></div>
                     <div class="form-floating mb-3">
                         <input type="password" autocomplete="current-password" class="form-control"
                             id="floatingPassword" name="password" placeholder="Password">
-                        <label for="floatingPassword">Password</label>
+                        <label for="floatingPassword" >Password</label>
                     </div>
+                    <div id="passworderror" class="container pb-2"></div>
                     <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
                 <div class="card-footer bg-white">
-                    Don't have an account? <a href="" class="btn text-primary p-1">Sign Up
+                    Don't have an account? <a href="./signuppage.html" class="btn text-primary p-1">Sign Up
                     </a>
                 </div>
                 <script>
                     function validateForm() {
                         const username = document.getElementById('floatingUsername').value.trim()
+                        const usernameinput = document.getElementById('floatingUsername')
                         const password = document.getElementById('floatingPassword').value.trim()
-                        if (!username && !password) {
-                            alert('Please enter your username and password.');
-                            return false;
+                        const passwordinput = document.getElementById('floatingPassword')
+                        const usernameerror = document.getElementById('usernameerror')
+                        const passworderror = document.getElementById('passworderror')
+                        usernameerror.textContent = '';
+                        passworderror.textContent = '';
+                        usernameerror.style.color = '';
+                        passworderror.style.color = '';
+                        passwordinput.style.border = '1px solid black'
+                        usernameinput.style.border = '1px solid black'
+                        let valid = true;
+
+                        if (!username) {
+                            usernameerror.textContent = 'Please enter your username.';
+                            usernameerror.style.color = 'red';
+                            usernameinput.style.border = '1px solid red'
+                            valid = false;
                         }
-                        else if (!username) {
-                            alert('Please enter your username.');
-                            return false;
-                        }
-                        else if (!password) {
-                            alert('Please enter your password.');
-                            return false;
+                        
+                        if (!password) {
+                            passworderror.textContent = 'Please enter your password.';
+                            passworderror.style.color = 'red';
+                            passwordinput.style.border = '1px solid red'
+                            valid = false;
                         }
 
-                        return true;
+                        return valid;
                     }
                 </script>
             </div>
