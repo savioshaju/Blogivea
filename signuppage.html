@@ -43,7 +43,7 @@
                         <label for="floatingConfirmPassword">Confirm Password</label>
                     </div>
                     <div id="confirmpassworderror" class="container mb-3"></div>
-                    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                    <button type="submit" class="btn btn-outline-primary w-100">Sign Up</button>
                 </form>
                 <div class="card-footer bg-white">
                     Already have an account? <a href="./loginpage.html" class="btn text-primary p-1">Log in
@@ -90,14 +90,29 @@
                             valid = false;
                         }
 
-                        if (!password) {
-                            passworderror.textContent = 'Please enter your password.';
+                        const passwordformat = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+                        if (!passwordformat.test(password)) {
+                            passworderror.innerHTML =
+                                `<ul style = "color: red; margin: 0; padding-left: 1.2rem;">
+                                <li>At least 8 characters</li>
+                                <li>At least 1 uppercase letter</li>
+                                <li>At least 1 number</li>
+                            </ul >
+                            `;
                             passworderror.style.color = 'red';
-                            passwordinput.style.border = '1px solid red'
+                            passwordinput.style.border = '1px solid red';
                             valid = false;
                         }
-                        if (!confirmpassword) {
-                            confirmpassworderror.textContent = 'Please confirm your password.';
+
+                        if (!passwordformat.test(confirmpassword)) {
+                            confirmpassworderror.innerHTML =
+                                `<ul style = "color: red; margin: 0; padding-left: 1.2rem;">
+                                <li>At least 8 characters</li>
+                                <li>At least 1 uppercase letter</li>
+                                <li>At least 1 number</li>
+                            </ul >
+                            `;
                             confirmpassworderror.style.color = 'red';
                             confirmpasswordinput.style.border = '1px solid red';
                             valid = false;
