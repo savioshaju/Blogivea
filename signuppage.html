@@ -19,6 +19,12 @@
                     <h1 class="display-4 fw-bold text-info">Sign Up</h1>
                 </div>
                 <form id="signupForm">
+                    <div class="form-floating mb-3">
+                        <input type="text" autocomplete="name" class="form-control" id="floatingName" name="name"
+                            placeholder="Enter name">
+                        <label for="floatingUsername">Name</label>
+                    </div>
+                    <div id="nameerror" class="container mb-3"></div>
 
                     <div class="form-floating mb-3">
                         <input type="text" autocomplete="username" class="form-control" id="floatingUsername"
@@ -55,7 +61,8 @@
                 <script>
                     document.getElementById('signupForm').addEventListener('submit', async function (event) {
                         event.preventDefault();
-
+                        const name = document.getElementById('floatingName').value.trim();
+                        const nameinput = document.getElementById('floatingName');
                         const username = document.getElementById('floatingUsername').value.trim();
                         const usernameinput = document.getElementById('floatingUsername');
                         const email = document.getElementById('floatingEmail').value.trim();
@@ -68,8 +75,8 @@
                         const emailerror = document.getElementById('emailerror');
                         const passworderror = document.getElementById('passworderror');
                         const confirmpassworderror = document.getElementById('confirmpassworderror');
-
-
+                        const nameerror = document.getElementById('nameerror');
+                        nameerror.textContent = '';
                         usernameerror.textContent = '';
                         emailerror.textContent = '';
                         passworderror.textContent = '';
@@ -80,6 +87,13 @@
                         confirmpasswordinput.style.border = '';
 
                         let valid = true;
+
+                        if (!name) {
+                            nameerror.textContent = 'Please enter your username.';
+                            nameerror.style.color = 'red';
+                            nameinput.style.border = '1px solid red';
+                            valid = false;
+                        }
 
 
                         if (!username) {
@@ -130,7 +144,7 @@
 
                         if (!valid) return;
 
-                        const userdata = { username, email, password };
+                        const userdata = {name, username, email, password };
 
                         try {
                             const response = await fetch(`${apiUrl}/api/users`, {

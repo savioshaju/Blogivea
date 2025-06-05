@@ -1,0 +1,28 @@
+#nav-btn {
+
+    color: #013ca5;
+    font-weight: bold;
+    margin: auto;
+    width: 8rem;
+    border: 2px solid transparent; 
+    border-radius: 30px;
+    text-align: center;
+    font-size: large;
+}
+
+#nav-btn:hover {
+    border: 2px solid #013ca5;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#profileDropdown::after {
+  display: none;
+  font-size: 2rem;
+}
+#profileDropdown i {
+  font-size: 1.8rem;
+  color: #013ca5;
+  margin: 0;
+  line-height: 0.1;
+}
