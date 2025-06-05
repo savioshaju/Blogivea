@@ -18,7 +18,7 @@
                 <div class="card-tittle">
                     <h1 class="display-4 fw-bold text-info">Log In</h1>
                 </div>
-                <form action="" method="post" onsubmit="return validateForm()">
+                <form id="signupForm">
                     <div class="form-floating mb-3">
                         <input type="text" autocomplete="username" class="form-control" id="floatingUsername"
                             name="username" placeholder="Enter username">
@@ -28,7 +28,7 @@
                     <div class="form-floating mb-3">
                         <input type="password" autocomplete="current-password" class="form-control"
                             id="floatingPassword" name="password" placeholder="Password">
-                        <label for="floatingPassword" >Password</label>
+                        <label for="floatingPassword">Password</label>
                     </div>
                     <div id="passworderror" class="container mb-3"></div>
                     <button type="submit" class="btn btn-outline-primary w-100">Login</button>
@@ -37,8 +37,11 @@
                     Don't have an account? <a href="./signuppage.html" class="btn text-primary p-1">Sign Up
                     </a>
                 </div>
+                <script src="./config.js"></script>
                 <script>
-                    function validateForm() {
+                    document.getElementById('signupForm').addEventListener('submit', async function (event) {
+                        event.preventDefault();
+
                         const username = document.getElementById('floatingUsername').value.trim()
                         const usernameinput = document.getElementById('floatingUsername')
                         const password = document.getElementById('floatingPassword').value.trim()
@@ -59,16 +62,48 @@
                             usernameinput.style.border = '1px solid red'
                             valid = false;
                         }
-                        
+
                         if (!password) {
                             passworderror.textContent = 'Please enter your password.';
                             passworderror.style.color = 'red';
                             passwordinput.style.border = '1px solid red'
                             valid = false;
                         }
+                        if (!valid) return;
 
-                        return valid;
-                    }
+                        const userdata = { username, password };
+
+                        try {
+                            const response = await fetch(`${apiUrl}/api/users/login`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ username, password }),
+                            });
+
+                            const data = await response.json();
+
+                            if (!response.ok) {
+                                alert(data.error || 'Login failed');
+                                return;
+                            }
+
+                            localStorage.setItem('authToken', data.token);
+
+                            const payload = JSON.parse(atob(data.token.split('.')[1]));
+                            const userType = payload.userType;
+
+                            if (userType === 'admin') {
+                                window.location.href = './admin.html';
+                            } else {
+                                window.location.href = './homepage.html';
+                            }
+
+                        } catch (error) {
+                            console.error('Login error:', error);
+                            alert('Network error during login.');
+                        }
+                    });
+
                 </script>
             </div>
         </div>
