@@ -1,0 +1,33 @@
+input.form-control {
+
+  padding-left: 1rem !important;
+  background-color: white !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+#editbtn {
+   
+  color: #013ca5;
+  font-weight: bold;
+  margin: auto;
+  width: 4rem;
+  border: 2px solid transparent;
+  border-radius: 30px;
+  text-align: center;
+  font-size: large;
+}
+#editbtn:hover {
+  border: 2px solid #013ca5;
+  border-radius: 20px;
+  cursor: pointer;
+}
+  #updateForm {
+    position: relative; 
+  }
+
+  #editbtn {
+    position: absolute; 
+    top: 15px;
+    right: 28px;
+  }
