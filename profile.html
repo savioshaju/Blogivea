@@ -67,159 +67,6 @@
                 <button type="button" class="btn btn-outline-danger w-100" id="deletebtn">Delete Account</button>
                 <script src="./config.js"></script>
 
-                <script>
-                    const nameinput = document.getElementById('floatingName');
-                    const usernameinput = document.getElementById('floatingUsername');
-                    const emailinput = document.getElementById('floatingEmail');
-                    const passwordinput = document.getElementById('floatingPassword');
-                    const confirmpasswordinput = document.getElementById('floatingConfirmPassword');
-                    const usernameerror = document.getElementById('usernameerror');
-                    const emailerror = document.getElementById('emailerror');
-                    const passworderror = document.getElementById('passworderror');
-                    const confirmpassworderror = document.getElementById('confirmpassworderror');
-                    const nameerror = document.getElementById('nameerror');
-                    document.getElementById('updateForm').addEventListener('submit', async function (event) {
-                        event.preventDefault();
-                        const name = document.getElementById('floatingName').value.trim();
-                        const username = document.getElementById('floatingUsername').value.trim();
-                        const email = document.getElementById('floatingEmail').value.trim();
-                        const password = document.getElementById('floatingPassword').value.trim();
-                        const confirmpassword = document.getElementById('floatingConfirmPassword').value.trim();
-                        nameerror.textContent = '';
-                        usernameerror.textContent = '';
-                        emailerror.textContent = '';
-                        passworderror.textContent = '';
-                        confirmpassworderror.textContent = '';
-                        usernameinput.style.border = '';
-                        emailinput.style.border = '';
-                        passwordinput.style.border = '';
-                        confirmpasswordinput.style.border = '';
-
-                        let valid = true;
-
-                        if (!name) {
-                            nameerror.textContent = 'Please enter your name.';
-                            nameerror.style.color = 'red';
-                            nameinput.style.border = '1px solid red';
-                            valid = false;
-                        }
-
-
-                        if (!username) {
-                            usernameerror.textContent = 'Please enter your username.';
-                            usernameerror.style.color = 'red';
-                            usernameinput.style.border = '1px solid red';
-                            valid = false;
-                        }
-
-
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (!email || !emailRegex.test(email)) {
-                            emailerror.textContent = 'Enter a valid email address.';
-                            emailerror.style.color = 'red';
-                            emailinput.style.border = '1px solid red';
-                            valid = false;
-                        }
-
-
-                        const isChangingPassword = password !== '' || confirmpassword !== '';
-
-                        if (isChangingPassword) {
-                            const passwordformat = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-
-                            if (!passwordformat.test(password)) {
-                                passworderror.innerHTML = `
-                                <ul style="color: red; margin: 0; padding-left: 1.2rem;">
-                                    <li>At least 8 characters</li>
-                                    <li>At least 1 uppercase letter</li>
-                                    <li>At least 1 number</li>
-                                </ul>`;
-                                passwordinput.style.border = '1px solid red';
-                                valid = false;
-                            }
-
-                            if (!passwordformat.test(confirmpassword)) {
-                                confirmpassworderror.innerHTML = `
-                                <ul style="color: red; margin: 0; padding-left: 1.2rem;">
-                                    <li>At least 8 characters</li>
-                                    <li>At least 1 uppercase letter</li>
-                                    <li>At least 1 number</li>
-                                </ul>`;
-                                confirmpasswordinput.style.border = '1px solid red';
-                                valid = false;
-                            } else if (password !== confirmpassword) {
-                                confirmpassworderror.textContent = 'Passwords do not match.';
-                                confirmpassworderror.style.color = 'red';
-                                passwordinput.style.border = '1px solid red';
-                                confirmpasswordinput.style.border = '1px solid red';
-                                valid = false;
-                            }
-                        }
-                        if (!valid) return;
-
-
-                        const updatedData = {
-                            name,
-                            username,
-                            email
-                        };
-
-                        if (isChangingPassword) {
-                            updatedData.password = password;
-                        }
-
-                        try {
-                            updatebtn.disabled = true;
-                            updatebtn.textContent = 'Saving...';
-
-                            const response = await fetch(`${apiUrl}/api/users/profile`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': 'Bearer ' + token
-                                },
-                                body: JSON.stringify(updatedData)
-                            });
-
-                            updatebtn.disabled = false;
-                            updatebtn.textContent = 'Save';
-
-                            if (!response.ok) {
-                                const error = await response.json();
-                                alert('Failed to update profile: ' + (error.message || 'Unknown error'));
-                                return;
-                            }
-
-                            const result = await response.json();
-
-
-                            nameinput.value = result.name;
-                            usernameinput.value = result.username;
-                            emailinput.value = result.email;
-
-
-                            nameinput.setAttribute('readonly', true);
-                            usernameinput.setAttribute('readonly', true);
-                            emailinput.setAttribute('readonly', true);
-                            passwordinput.style.display = 'none';
-                            confirmpasswordinput.style.display = 'none';
-                            passwordlabel.style.display = 'none';
-                            confirmpasswordlabel.style.display = 'none';
-                            updatebtn.style.display = 'none';
-                            cancelbtn.style.display = 'none';
-                            editbtn.style.display = 'inline-block';
-
-
-                            passwordinput.value = '';
-                            confirmpasswordinput.value = '';
-
-                            alert('Profile updated successfully!');
-                        } catch (error) {
-                            console.error('Error updating profile:', error);
-                            alert('An error occurred. Please try again later.');
-                        }
-                    });
-                </script>
 
             </div>
         </div>
@@ -227,12 +74,24 @@
     <script src="./config.js"></script>
 
     <script>
+        const nameinput = document.getElementById('floatingName');
+        const usernameinput = document.getElementById('floatingUsername');
+        const emailinput = document.getElementById('floatingEmail');
+        const passwordinput = document.getElementById('floatingPassword');
+        const confirmpasswordinput = document.getElementById('floatingConfirmPassword');
+        const usernameerror = document.getElementById('usernameerror');
+        const emailerror = document.getElementById('emailerror');
+        const passworderror = document.getElementById('passworderror');
+        const confirmpassworderror = document.getElementById('confirmpassworderror');
+        const nameerror = document.getElementById('nameerror');
         const token = localStorage.getItem('authToken');
         const updatebtn = document.getElementById('updatebtn')
         const cancelbtn = document.getElementById('cancelbtn');
         const deletebtn = document.getElementById('deletebtn')
         const passwordlabel = document.getElementById('password')
         const confirmpasswordlabel = document.getElementById('confirmPassword')
+
+
         if (!token) {
             document.getElementById('user-info').innerText = 'You are not logged in.';
         }
@@ -269,6 +128,7 @@
             passwordlabel.style.display = 'inline-block';
             confirmpasswordlabel.style.display = 'inline-block';
             deletebtn.style.display = 'none'
+            edit.style.display = 'none'
 
         })
 
@@ -301,6 +161,151 @@
             passwordinput.style.border = '';
             confirmpasswordinput.style.border = '';
         })
+
+
+
+
+        document.getElementById('updateForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const name = document.getElementById('floatingName').value.trim();
+            const username = document.getElementById('floatingUsername').value.trim();
+            const email = document.getElementById('floatingEmail').value.trim();
+            const password = document.getElementById('floatingPassword').value.trim();
+            const confirmpassword = document.getElementById('floatingConfirmPassword').value.trim();
+            nameerror.textContent = '';
+            usernameerror.textContent = '';
+            emailerror.textContent = '';
+            passworderror.textContent = '';
+            confirmpassworderror.textContent = '';
+            usernameinput.style.border = '';
+            emailinput.style.border = '';
+            passwordinput.style.border = '';
+            confirmpasswordinput.style.border = '';
+
+            let valid = true;
+
+            if (!name) {
+                nameerror.textContent = 'Please enter your name.';
+                nameerror.style.color = 'red';
+                nameinput.style.border = '1px solid red';
+                valid = false;
+            }
+
+
+            if (!username) {
+                usernameerror.textContent = 'Please enter your username.';
+                usernameerror.style.color = 'red';
+                usernameinput.style.border = '1px solid red';
+                valid = false;
+            }
+
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                emailerror.textContent = 'Enter a valid email address.';
+                emailerror.style.color = 'red';
+                emailinput.style.border = '1px solid red';
+                valid = false;
+            }
+
+
+            const isChangingPassword = password !== '' || confirmpassword !== '';
+
+            if (isChangingPassword) {
+                const passwordformat = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+                if (!passwordformat.test(password)) {
+                    passworderror.innerHTML = `
+                    <ul style="color: red; margin: 0; padding-left: 1.2rem;">
+                        <li>At least 8 characters</li>
+                        <li>At least 1 uppercase letter</li>
+                        <li>At least 1 number</li>
+                    </ul>`;
+                    passwordinput.style.border = '1px solid red';
+                    valid = false;
+                }
+
+                if (!passwordformat.test(confirmpassword)) {
+                    confirmpassworderror.innerHTML = `
+                    <ul style="color: red; margin: 0; padding-left: 1.2rem;">
+                        <li>At least 8 characters</li>
+                        <li>At least 1 uppercase letter</li>
+                        <li>At least 1 number</li>
+                    </ul>`;
+                    confirmpasswordinput.style.border = '1px solid red';
+                    valid = false;
+                } else if (password !== confirmpassword) {
+                    confirmpassworderror.textContent = 'Passwords do not match.';
+                    confirmpassworderror.style.color = 'red';
+                    passwordinput.style.border = '1px solid red';
+                    confirmpasswordinput.style.border = '1px solid red';
+                    valid = false;
+                }
+            }
+            if (!valid) return;
+
+
+            const updatedData = {
+                name,
+                username,
+                email
+            };
+
+            if (isChangingPassword) {
+                updatedData.password = password;
+            }
+
+            try {
+                updatebtn.disabled = true;
+                updatebtn.textContent = 'Saving...';
+
+                const response = await fetch(`${apiUrl}/api/users/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+
+                const result = await response.json(); 
+
+                updatebtn.disabled = false;
+                updatebtn.textContent = 'Save';
+
+                if (!response.ok) {
+                    alert('Failed to update profile: ' + (result.message || 'Unknown error'));
+                    return;
+                }
+
+
+
+                nameinput.value = result.name;
+                usernameinput.value = result.username;
+                emailinput.value = result.email;
+
+
+                nameinput.setAttribute('readonly', true);
+                usernameinput.setAttribute('readonly', true);
+                emailinput.setAttribute('readonly', true);
+                passwordinput.style.display = 'none';
+                confirmpasswordinput.style.display = 'none';
+                passwordlabel.style.display = 'none';
+                confirmpasswordlabel.style.display = 'none';
+                updatebtn.style.display = 'none';
+                cancelbtn.style.display = 'none';
+                editbtn.style.display = 'inline-block';
+                deletebtn.style.display = 'inline-block';
+
+                passwordinput.value = '';
+                confirmpasswordinput.value = '';
+
+                alert('Profile updated successfully!');
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
     </script>
 </body>
 

@@ -1,8 +1,14 @@
 #nav-btn {
 
+
     color: #013ca5;
     font-weight: bold;
     margin: auto;
+    width: 8rem;
+    border: 2px solid transparent;
+    border-radius: 30px;
+    text-align: center;
+    font-size: large;
 
 }
 
