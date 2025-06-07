@@ -98,8 +98,7 @@
             profileerror.innerText = 'You are not logged in.';
         }
         else {
-            userprofile.style.display = 'block';
-
+            
             fetch(`${apiUrl}/api/users/profile`, {
                 method: 'GET',
                 headers: {
@@ -109,6 +108,7 @@
                 if (!res.ok) throw new Error('Failed to fetch user data');
                 return res.json();
             }).then(user => {
+                userprofile.style.display = 'block';
                 nameinput.value = user.name;
                 usernameinput.value = user.username;
                 emailinput.value = user.email;
@@ -204,7 +204,7 @@
             }
 
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
             if (!email || !emailRegex.test(email)) {
                 emailerror.textContent = 'Enter a valid email address.';
                 emailerror.style.color = 'red';
@@ -216,7 +216,7 @@
             const isChangingPassword = password !== '' || confirmpassword !== '';
 
             if (isChangingPassword) {
-                const passwordformat = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+                const passwordformat = /^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
 
                 if (!passwordformat.test(password)) {
                     passworderror.innerHTML = `
