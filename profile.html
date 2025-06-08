@@ -14,7 +14,6 @@
 </head>
 
 <body>
-    <div id="profileerror"></div>
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;display : none;"
         id="userprofile">
         <div class="container-sm  card p-5 bg-info shadow"
@@ -97,7 +96,6 @@
             const profileerror = document.getElementById('profileerror')
             const userprofile = document.getElementById('userprofile')
             if (!token) {
-                profileerror.innerText = 'You are not logged in.';
                 alert('You are not logged in.');
                 window.location.href = './loginpage.html'
             }
