@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Medium Blog Editor</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/newblog.css">
+</head>
+
+<body>
+    <div class="container p-3 my-5">
+        <div class="mt-4 bg-info p-1 d-flex justify-content-end gap-2 align-items-center"
+            style="border: 3px solid #013ca5 !important; border-bottom: 0px none !important;">
+            <button class="btn btn-danger" id="cancelPost">Cancel</button>
+            <button class="btn btn-success" id="saveDraft">Save Draft</button>
+            <button class="btn btn-primary" id="publishPost">Publish</button>
+        </div>
+        <div id="toolbar" class="container-fluid d-flex bg-info"
+            style="border: 3px solid #013ca5 !important; border-bottom: 0px none !important;  border-top: none !important;">
+            <div class="d-flex align-items-center">
+                <button class="ql-bold btn"></button>
+                <button class="ql-italic btn"></button>
+                <button class="ql-underline btn"></button>
+                <button class="ql-image btn"></button>
+            </div>
+            <div class="d-flex align-items-center">
+                <select id="font-size" class="ql-font me-1">
+                    <option value="sans-serif" selected>Sans Serif</option>
+                    <option value="serif">Serif</option>
+                    <option value="monospace">Monospace</option>
+                    <option value="arial">Arial</option>
+                    <option value="georgia">Georgia</option>
+                    <option value="times-new-roman">Times New Roman</option>
+                    <option value="roboto">Roboto</option>
+                </select>
+
+                <select class="ql-size" style="width: 40px;">
+                    <option value="8px">8</option>
+                    <option value="10px">10</option>
+                    <option value="12px">12</option>
+                    <option value="14px" selected>14</option>
+                    <option value="16px">16</option>
+                    <option value="18px">18</option>
+                    <option value="24px">24</option>
+                    <option value="32px">32</option>
+                    <option value="48px">48</option>
+                    <option value="64px">64</option>
+                </select>
+
+                <select class="ql-color me-1"></select>
+                <select class="ql-background me-1"></select>
+
+            </div>
+        </div>
+
+        <div id="editor" class="container-fluid border"
+            style="border: 3px solid #013ca5 !important; border-top: 0px none !important; height: 500px;">
+        </div>
+    </div>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.10/dist/purify.min.js"></script>
+
+    <script>
+        const SizeStyle = Quill.import("attributors/style/size");
+        Quill.register(SizeStyle, true);
+
+        const Font = Quill.import("formats/font");
+        Font.whitelist = [
+            "sans-serif",
+            "serif",
+            "monospace",
+            "arial",
+            "georgia",
+            "times-new-roman",
+            "roboto",
+        ];
+        Quill.register(Font, true);
+
+        const quill = new Quill("#editor", {
+            theme: "snow",
+            placeholder: "Compose your blog post...",
+            modules: {
+                toolbar: "#toolbar",
+            },
+        });
+
+        const fontSize = document.getElementById("font-size");
+        fontSize.addEventListener("change", (event) => {
+            const fontsize = event.target.value;
+            const range = quill.getSelection();
+
+            if (!range) {
+                quill.focus();
+            }
+            quill.format("size", fontsize);
+        });
+
+
+        function autosaveDraft() {
+            const content = quill.root.innerHTML;
+            const sanitizedContent = DOMPurify.sanitize(content);
+            localStorage.setItem("draft", sanitizedContent);
+            console.log("Draft autosaved.");
+        }
+
+        setInterval(autosaveDraft, 5000);
+
+        document.getElementById("saveDraft").addEventListener("click", () => {
+            autosaveDraft();
+            alert("Draft saved!");
+        });
+
+        document.getElementById("publishPost").addEventListener("click", () => {
+            if (confirm("This will publish your blog — are you sure you want to continue?")) {
+                const content = quill.root.innerHTML;
+                const sanitizedContent = DOMPurify.sanitize(content);
+                console.log("Publishing post:", sanitizedContent);
+
+                // Simulate API post success:
+                localStorage.removeItem("draft"); 
+                alert("Post published successfully.");
+                window.location.href = './homepage.html';
+            } else {
+                alert("Publish canceled. Your draft is preserved.");
+            }
+        });
+
+        document.getElementById('cancelPost').addEventListener('click', () => {
+
+            if (confirm("You have unsaved changes. If you leave now, your data will be lost. Do you want to continue?")) {
+                localStorage.removeItem('draft');
+                quill.setContents([]);
+                window.location.href = './homepage.html';
+            }
+        })
+
+
+        window.addEventListener("load", () => {
+            const savedDraft = localStorage.getItem("draft");
+            if (savedDraft) {
+                quill.clipboard.dangerouslyPasteHTML(savedDraft);
+                console.log("Draft loaded:", savedDraft);
+            } else {
+                console.log("No draft found.");
+            }
+        });
+    </script>
+</body>
+
+</html>

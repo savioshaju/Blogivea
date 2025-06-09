@@ -1,0 +1,46 @@
+.ql-toolbar button {
+    border: 1px solid #013ca5 !important;
+    color: #013ca5 !important;
+    background-color: transparent;
+    margin: 0.2rem;
+    font-weight: bold;
+}
+
+#editor .ql-editor {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    padding: 15px;
+   
+}
+
+.ql-toolbar button:hover,
+.ql-toolbar button.ql-active {
+    background-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+.ql-font-arial {
+    font-family: Arial, sans-serif;
+}
+
+.ql-font-georgia {
+    font-family: Georgia, serif;
+}
+
+.ql-font-times-new-roman {
+    font-family: "Times New Roman", Times, serif;
+}
+
+.ql-font-roboto {
+    font-family: Roboto, sans-serif;
+}
+.ql-color,
+.ql-background {
+    border: none;
+    background-color: white;
+    padding: 0;
+    border-radius: 0.25rem;
+    cursor: pointer;
+
+}
+
