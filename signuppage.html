@@ -51,7 +51,7 @@
                         <label for="floatingConfirmPassword">Confirm Password</label>
                     </div>
                     <div id="confirmpassworderror" class="container mb-3"></div>
-                    <button type="submit" class="btn btn-success w-100">Sign Up</button>
+                    <button type="submit" class="btn btn-success .btn-loading w-100" id="signUp">Sign Up</button>
                 </form>
                 <div class="card-footer bg-info">
                     Already have an account? <a href="./loginpage.html" class="btn text-primary p-1">Log in
@@ -60,6 +60,7 @@
                 <script src="./config.js"></script>
 
                 <script>
+                    const signUp = document.getElementById('signUp')
                     document.getElementById('signupForm').addEventListener('submit', async function (e) {
                         e.preventDefault();
                         const name = document.getElementById('floatingName').value.trim();
@@ -105,7 +106,7 @@
                         }
 
 
-                        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
+                        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                         if (!email || !emailRegex.test(email)) {
                             emailerror.textContent = 'Enter a valid email address.';
                             emailerror.style.color = 'red';
@@ -148,6 +149,8 @@
                         const userdata = { name, username, email, password };
 
                         try {
+                            signUp.disabled = true;
+                            signUp.textContent = 'Signing up...'
                             const response = await fetch(`${apiUrl}/api/users`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -156,8 +159,9 @@
 
                             if (!response.ok) {
                                 const errorText = await response.text();
-                                console.error("Server responded with error:", errorText);
                                 alert(`Error creating user:\n${errorText}`);
+                                signUp.disabled = false;
+                                signUp.textContent = 'Sign Up';
                                 return;
                             }
 
@@ -168,6 +172,8 @@
                         } catch (error) {
                             console.error("Network or server error:", error);
                             alert("Error creating user");
+                            signUp.disabled = false;
+                            signUp.textContent = 'Sign Up';
                         }
                     });
                 </script>

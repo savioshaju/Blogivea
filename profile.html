@@ -207,7 +207,7 @@
                 }
 
 
-                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 if (!email || !emailRegex.test(email)) {
                     emailerror.textContent = 'Enter a valid email address.';
                     emailerror.style.color = 'red';
@@ -311,6 +311,8 @@
                 } catch (error) {
                     console.error('Error updating profile:', error);
                     alert('An error occurred. Please try again later.');
+                    updatebtn.disabled = false;
+                    updatebtn.textContent = 'Save';
                 }
             });
         });
