@@ -22,10 +22,15 @@
                         <input type="text" class="form-control" id="blogTitleInput" placeholder="Blog Title">
                         <label for="blogTitleInput">Blog Title</label>
                     </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="blogdescInput" placeholder="Blog Description"
+                            maxlength="200">
+                        <label for="blogdescInput">Blog Short Description</label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-danger" id="cancel">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveTitleButton">Save Title</button>
+                    <button type="button" class="btn btn-primary" id="saveTitleButton">Save</button>
                 </div>
             </div>
         </div>
@@ -35,9 +40,10 @@
         <div class="mt-4 bg-info p-1 d-flex justify-content-between align-items-center"
             style="border: 3px solid #013ca5 !important; border-bottom: 0px none !important;">
 
-
-            <div id="BlogTitle" class="ms-2 fw-bold fs-4 text-success"></div>
-
+            <div class="d-flex flex-column">
+                <div id="BlogTitle" class="ms-2 fw-bold fs-3 text-success"></div>
+                <div id="BlogDesc" class="ms-2 fw-bold fs-5 text-success"></div>
+            </div>
             <div class="d-flex gap-2 me-2">
                 <button class="btn btn-danger" id="cancelPost">Cancel</button>
                 <button class="btn btn-success" id="saveDraft">Save Draft</button>
@@ -81,6 +87,16 @@
                 <select class="ql-background me-1"></select>
 
             </div>
+            <div class="d-flex align-items-center ms-3">
+                <button class="ql-list btn" value="ordered" title="Ordered List"></button>
+                <button class="ql-list btn" value="bullet" title="Bullet List"></button>
+                <select class="ql-header" title="Header level">
+                    <option selected></option> 
+                    <option value="1"></option>
+                    <option value="2"></option>
+                    <option value="3"></option> 
+                </select>
+            </div>
         </div>
 
         <div id="editor" class="container-fluid border"
@@ -92,19 +108,25 @@
     <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.10/dist/purify.min.js"></script>
     <script src="./config.js"></script>
     <script>
-        let blogTitle
+        let blogTitle, blogDesc
         window.addEventListener("load", () => {
-            const savedDraft = localStorage.getItem("draft");
-            if (savedDraft) {
-                quill.clipboard.dangerouslyPasteHTML(savedDraft);
-                document.getElementById('BlogTitle').textContent = blogTitle;
-
-            }
             const savedTitle = localStorage.getItem("blogTitle");
             if (savedTitle) {
                 blogTitle = savedTitle;
                 document.getElementById('blogTitleInput').value = savedTitle;
-                console.log("Blog title loaded:", savedTitle);
+                document.getElementById('BlogTitle').textContent = blogTitle;
+            }
+
+            const savedDesc = localStorage.getItem("blogDesc");
+            if (savedDesc) {
+                blogDesc = savedDesc;
+                document.getElementById('blogdescInput').value = savedDesc;
+                document.getElementById('BlogDesc').textContent = blogDesc;
+            }
+
+            const savedDraft = localStorage.getItem("draft");
+            if (savedDraft) {
+                quill.clipboard.dangerouslyPasteHTML(savedDraft);
             }
 
             const modalEl = document.getElementById('titleModal');
@@ -114,12 +136,20 @@
 
             document.getElementById('saveTitleButton').addEventListener('click', () => {
                 const input = document.getElementById('blogTitleInput').value.trim();
+                const desc = document.getElementById('blogdescInput').value.trim();
                 if (!input) {
                     alert("Title cannot be empty.");
                     return;
+                } else {
+                    if (!desc) {
+                        alert("Blog Description cannot be empty.");
+                        return;
+                    }
                 }
                 blogTitle = input;
+                blogDesc = desc
                 document.getElementById('BlogTitle').textContent = blogTitle;
+                document.getElementById('BlogDesc').textContent = blogDesc;
                 modal.hide();
             });
         });
@@ -166,10 +196,12 @@
             const sanitizedContent = DOMPurify.sanitize(content);
             localStorage.setItem("draft", sanitizedContent);
             localStorage.setItem("blogTitle", blogTitle);
+            localStorage.setItem("blogDesc", blogDesc)
             console.log("Draft autosaved.");
         }
 
-        setInterval(autosaveDraft, 5000);
+        const draftInterval = setInterval(autosaveDraft, 5000);
+
 
         document.getElementById("saveDraft").addEventListener("click", () => {
             autosaveDraft();
@@ -196,7 +228,7 @@
                 const sanitizedContent = DOMPurify.sanitize(content);
                 localStorage.setItem("draft", sanitizedContent);
                 localStorage.setItem("blogTitle", blogTitle);
-
+                localStorage.setItem("blogDesc", blogDesc)
 
                 window.location.href = './loginpage.html';
                 return;
@@ -223,6 +255,7 @@
                     username: user.username,
                     content: sanitizedContent,
                     title: blogTitle,
+                    description: blogDesc,
                     createdAt: new Date().toISOString()
                 };
 
@@ -240,42 +273,47 @@
                     const errorText = await postResponse.text();
                     console.error("Server responded with error:", errorText);
                     alert(`Error publishing post:\n${errorText}`);
-                    publishPost.disabled = flase;
+                    publishPost.disabled = false;
                     publishPost.textContent = 'Publish'
                     return;
                 }
 
+                clearInterval(draftInterval);
                 localStorage.removeItem('draft');
-                localStorage.removeItem('blogTitle')
+                localStorage.removeItem('blogTitle');
+                localStorage.removeItem('blogDesc');
                 alert("Post published successfully.");
                 window.location.href = './homepage.html';
+
 
             } catch (error) {
                 console.error("Error during publish flow:", error);
                 alert("Error publishing post. Please try again.");
-                publishPost.disabled = flase;
+                publishPost.disabled = false;
                 publishPost.textContent = 'Publish'
             }
         });
 
         document.getElementById('cancelPost').addEventListener('click', () => {
-
             if (confirm("You have unsaved changes. If you leave now, your data will be lost. Do you want to continue?")) {
+                clearInterval(draftInterval);
                 localStorage.removeItem('draft');
-                localStorage.removeItem('blogTitle')
+                localStorage.removeItem('blogTitle');
+                localStorage.removeItem('blogDesc');
                 quill.setContents([]);
                 window.location.href = './homepage.html';
             }
-        })
+        });
+
         document.getElementById('cancel').addEventListener('click', () => {
-
-
+            clearInterval(draftInterval);
             localStorage.removeItem('draft');
-            localStorage.removeItem('blogTitle')
+            localStorage.removeItem('blogTitle');
+            localStorage.removeItem('blogDesc');
             quill.setContents([]);
             window.location.href = './homepage.html';
+        });
 
-        })
 
     </script>
 </body>

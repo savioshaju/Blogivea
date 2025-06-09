@@ -90,12 +90,14 @@
                     const container = document.createElement('div')
                     container.className = "card px-2 py-1 my-2 mx-auto d-flex border border-success shadow"
                     container.style.width = '24rem'
+                    container.style.cursor = 'pointer';
                     const cardbody = document.createElement('div')
                     cardbody.className = "card-body"
                     const h5 = document.createElement('h5')
                     h5.className = 'card-title'
                     const p = document.createElement('p')
                     p.className = "card-text"
+                    p.textContent = posts[i].description
                     h5.textContent = posts[i].title
                     const footer = document.createElement('div')
                     footer.className = "card-footer text-muted d-flex justify-content-between"
@@ -103,16 +105,22 @@
                     const date = document.createElement('span')
                     userName.textContent = "By : " + posts[i].username
                     const dateObj = new Date(posts[i].createdAt);
-                    const dateString = dateObj.toLocaleDateString(); 
-                    const timeString = dateObj.toLocaleTimeString(); 
+                    const dateString = dateObj.toLocaleDateString();
+                    const timeString = dateObj.toLocaleTimeString();
                     date.textContent = "Date: " + dateString + " Time: " + timeString;
+
                     cardbody.appendChild(h5)
+                    cardbody.appendChild(p)
 
                     footer.appendChild(userName)
                     footer.appendChild(date)
 
                     container.appendChild(cardbody)
                     container.appendChild(footer)
+                    container.addEventListener('click', () => {
+                        sessionStorage.setItem('selectedPostId', posts[i]._id);
+                        window.location.href = `./blog.html`;
+                    });
                     outer.appendChild(container)
                     post.appendChild(outer)
 
@@ -124,10 +132,7 @@
             }
         }
 
-
         fetchPosts();
-
-
     </script>
 </body>
 

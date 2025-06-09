@@ -19,21 +19,6 @@
     color: #ffffff !important;
 }
 
-.ql-font-arial {
-    font-family: Arial, sans-serif;
-}
-
-.ql-font-georgia {
-    font-family: Georgia, serif;
-}
-
-.ql-font-times-new-roman {
-    font-family: "Times New Roman", Times, serif;
-}
-
-.ql-font-roboto {
-    font-family: Roboto, sans-serif;
-}
 .ql-color,
 .ql-background {
     border: none;
