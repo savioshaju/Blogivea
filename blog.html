@@ -7,7 +7,7 @@
     <title>Blog Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <link rel="stylesheet" href="./css/blog.css">
+    <link rel="stylesheet" href="./css/blog.css">
 </head>
 
 <body>
@@ -28,10 +28,10 @@
 
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
         <div class="offcanvas-header">
-            <h5 id="offcanvasRightLabel"></h5>
+            <h5 id="blogtittle"></h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body"></div>
+        <div class="offcanvas-body " id="blogSummary"></div>
     </div>
 
 
@@ -83,7 +83,7 @@
         fetchBlogDetails();
 
     </script>
-    <script>
+    <script type="module">
         async function summarize(text) {
             const resp = await fetch(`${apiUrl}/api/summarize`, {
                 method: 'POST',
@@ -92,19 +92,27 @@
                 },
                 body: JSON.stringify({ text })
             });
-            if (!resp.ok) throw new Error("Failed to get summary")
-            const data = await resp.json()
-            console.log(data.summary)
-            return data.summary
+            if (!resp.ok) throw new Error("Failed to get summary");
+            const data = await resp.json();
+            return data.summary;
         }
 
+        document.getElementById('aiSummary').addEventListener('click', async () => {
+            const originalText = document.getElementById('post-description').innerText;
+            if (!originalText.trim()) return;
+
+            try {
+                const summary = await summarize(originalText);
+                console.log(summary)
+                document.getElementById('blogSummary').textContent = summary;
+            } catch (err) {
+                console.error('Error getting summary:', err);
+                document.querySelector('.offcanvas-body').textContent = 'Failed to summarize post.';
+            }
+        });
     </script>
 
-    <script>
-        const originalText = document.getElementById('post-description').innerText;
-        const summary = await summarize(originalText);
-        console.log(summary)
-    </script>
+
 </body>
 
 </html>
