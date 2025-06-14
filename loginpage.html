@@ -92,6 +92,15 @@
                                 loginBtn.textContent = 'Login';
                                 return;
                             }
+                            
+                            const previousUser = localStorage.getItem("currentUser");
+
+                            if (previousUser && previousUser !== username) {
+                                
+                                localStorage.clear();
+                                sessionStorage.clear();
+                            }
+                            localStorage.setItem("currentUser", username);
 
                             localStorage.setItem('authToken', data.token);
 

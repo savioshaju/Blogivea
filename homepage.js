@@ -1,6 +1,6 @@
 document.getElementById('logoutButton').addEventListener('click', function (e) {
     e.preventDefault();
-    localStorage.removeItem('authToken');
-    sessionStorage.removeItem('authToken');
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = './index.html';
 });

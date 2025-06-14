@@ -31,7 +31,12 @@
             <h5 id="blogtittle"></h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body " id="blogSummary"></div>
+        <div class="offcanvas-body " id="blogSummary">
+            <div class="d-flex ">
+                <div class="spinner-border text-success" role="status"></div>
+                <div class="h4 px-3 text-success">AI is summarizing...</div>
+            </div>
+        </div>
     </div>
 
 
@@ -68,7 +73,7 @@
                 document.getElementById('post-author').textContent = "By: @" + post.username;
                 const dateObj = new Date(post.createdAt);
                 document.getElementById('post-date').textContent = "Date: " + dateObj.toLocaleDateString()
-
+                document.getElementById('blogtittle').textContent = post.title + "(Blog Summary)";
 
             } catch (error) {
                 console.error('Error fetching post:', error);
