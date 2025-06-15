@@ -1,9 +1,16 @@
-#aiSummary {
+#liveToastBtn {
   position: fixed;
   bottom: 25px;
   left: 15px;
   z-index: 1050;
 }
+
 #aiSummary:hover {
   transform: scale(1.1);
+}
+
+.BlogSummaryBody {
+  min-width: 600px;
+  max-width: 90%;
+
 }

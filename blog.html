@@ -12,7 +12,14 @@
 
 <body>
 
-    <div class="container border border-success  mx-auto px-0  my-5 ">
+    <div class="d-flex justify-content-center my-5" id="loadingPost">
+        <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <div class="text-center text-danger fw-bold" id="errorPost" style="display: none;"></div>
+
+    <div class="container border border-success  mx-auto px-0  my-5" style="display: none;" id="post">
         <div class=" text-muted bg-success d-flex justify-content-between py-3 px-4 align-items-center">
             <span class="text-white" id="post-author"></span>
             <span class="text-white" style="font-style: italic;" id="post-date"></span>
@@ -23,18 +30,22 @@
         </div>
     </div>
 
-    <button class="btn" id="aiSummary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
-        aria-controls="offcanvasRight"><img src="./icon/aiicon.png" alt="ai icon" style="width : 6rem"></button>
+    <button class="btn" id="liveToastBtn" type="button"><img src="./icon/aiicon.png" alt="ai icon"
+            style="width : 6rem"></button>
 
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-        <div class="offcanvas-header">
-            <h5 id="blogtittle"></h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body " id="blogSummary">
-            <div class="d-flex ">
-                <div class="spinner-border text-success" role="status"></div>
-                <div class="h4 px-3 text-success">AI is summarizing...</div>
+    <div class="position-fixed bottom-0 end-0 p-3 " style="z-index: 11">
+        <div id="liveToast" class="toast hide BlogSummaryBody" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div class="toast-header">
+                <strong class="me-auto">
+                    <h5 id="blogtittle"></h5>
+                </strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body fs-5" id="blogSummary">
+                <div class="d-flex ">
+                    <div class="spinner-border text-success fs-5" role="status"></div>
+                    <div class=" px-3 text-success h5">AI is summarizing...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -46,12 +57,17 @@
 
     <script src="./config.js"></script>
     <script>
+        const toastElement = document.getElementById('liveToast');
+        const toast = new bootstrap.Toast(toastElement);
         async function fetchBlogDetails() {
             const postId = sessionStorage.getItem('selectedPostId');
+            const loadingPost = document.getElementById('loadingPost');
+            const errorPost = document.getElementById('errorPost');
+
             if (!postId) {
-                loadingEl.style.display = 'none';
-                errorEl.textContent = 'No post selected. Please go back and select a post.';
-                console.error('No post ID found in sessionStorage');
+                loadingPost.style.display = 'none';
+                errorPost.style.display = 'block';
+                errorPost.textContent = 'No post selected. Please go back and select a post.';
                 return;
             }
 
@@ -67,18 +83,19 @@
                 if (!post || !post.title) {
                     throw new Error('Invalid post data received');
                 }
-
+                loadingPost.innerHTML = ' ';
+                document.getElementById('post').style.display = 'block';
                 document.getElementById('post-title').textContent = post.title;
                 document.getElementById('post-description').innerHTML = post.content;
                 document.getElementById('post-author').textContent = "By: @" + post.username;
                 const dateObj = new Date(post.createdAt);
                 document.getElementById('post-date').textContent = "Date: " + dateObj.toLocaleDateString()
-                document.getElementById('blogtittle').textContent = post.title + "(Blog Summary)";
+                document.getElementById('blogtittle').innerHTML = post.title + "<br>(Blog Summary)";
 
             } catch (error) {
-                console.error('Error fetching post:', error);
-                loadingEl.style.display = 'none';
-                errorEl.textContent = 'An error occurred while loading the post. Please try again later.';
+                loadingPost.style.display = 'none';
+                errorPost.style.display = 'block';
+                errorPost.textContent = 'An error occurred while loading the post. Please try again later.';
             }
         }
 
@@ -102,7 +119,8 @@
             return data.summary;
         }
 
-        document.getElementById('aiSummary').addEventListener('click', async () => {
+        document.getElementById('liveToastBtn').addEventListener('click', async () => {
+            toast.show()
             const originalText = document.getElementById('post-description').innerText;
             if (!originalText.trim()) return;
 
@@ -112,7 +130,8 @@
                 document.getElementById('blogSummary').textContent = summary;
             } catch (err) {
                 console.error('Error getting summary:', err);
-                document.querySelector('.offcanvas-body').textContent = 'Failed to summarize post.';
+                document.getElementById('blogSummary').textContent = 'Failed to summarize post.';
+
             }
         });
     </script>
