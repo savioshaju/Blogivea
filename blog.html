@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    <button class="btn" id="liveToastBtn" type="button"><img src="./icon/aiicon.png" alt="ai icon"
+    <button class="btn" id="liveToastBtn" type="button" style="display: none;"><img src="./icon/aiicon.png" alt="ai icon"
             style="width : 6rem"></button>
 
     <div class="position-fixed bottom-0 end-0 p-3 " style="z-index: 11">
@@ -85,6 +85,7 @@
                 }
                 loadingPost.innerHTML = ' ';
                 document.getElementById('post').style.display = 'block';
+                document.getElementById('liveToastBtn').style.display = 'block';
                 document.getElementById('post-title').textContent = post.title;
                 document.getElementById('post-description').innerHTML = post.content;
                 document.getElementById('post-author').textContent = "By: @" + post.username;
