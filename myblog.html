@@ -257,7 +257,7 @@
             container.appendChild(cardbody);
             container.appendChild(footer);
 
-            container.addEventListener('click', () => {
+            container.addEventListener('dblclick', () => {
                 sessionStorage.setItem('selectedPostId', postItem._id);
                 window.location.href = './blog.html';
             });
