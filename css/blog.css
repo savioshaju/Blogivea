@@ -2,15 +2,25 @@
   position: fixed;
   bottom: 25px;
   left: 15px;
-  z-index: 1050;
+  z-index: 100;
 }
 
-#aiSummary:hover {
+#liveToastBtn:hover {
   transform: scale(1.1);
 }
 
 .BlogSummaryBody {
   min-width: 400px;
   max-width: 90%;
+
+}
+
+.toast {
+  position: fixed !important;
+  bottom: 150px;
+  left: 15px;
+
+  background-color: #fff !important;
+  opacity: 1 !important;
 
 }
