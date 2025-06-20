@@ -77,7 +77,7 @@
 
                         try {
                             loginBtn.disabled = true;
-                            loginBtn.textContent = 'Logging in...';
+                            loginBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Logging in...`;
                             const response = await fetch(`${apiUrl}/api/users/login`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },

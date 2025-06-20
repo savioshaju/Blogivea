@@ -67,13 +67,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-
+    <div class="d-flex row justify-content-center my-5" id="loadingPost">
+        <div class="spinner-border text-success col-7" id="loadingicon" role="status">
+            <span class="visually-hidden ">Loading...</span>
+        </div>
+        <div class="text-center text-danger fw-bold col-5" id="errorPost" style="display: none;"></div>
+    </div>
     <div id="post" class=" row g-4"></div>
 
     <script>
         let username, name;
         const token = localStorage.getItem('authToken');
-
+        const loadingPost = document.getElementById('loadingPost');
         if (!token) {
             alert('You are not logged in.');
             window.location.href = './loginpage.html';
@@ -91,6 +96,7 @@
                 .then(user => {
                     name = user.name;
                     username = user.username;
+
                     fetchMyPosts();
                 })
                 .catch(err => {
@@ -110,6 +116,7 @@
                     }
                 });
                 post.innerHTML = '';
+                loadingPost.classList.add('d-none')
 
                 if (!res.ok) {
                     noPosts(post);
@@ -117,6 +124,7 @@
 
                 const posts = await res.json();
                 if (posts.length) {
+
                     posts.forEach(postItem => myPost(post, postItem));
                 }
 
@@ -262,7 +270,7 @@
                 window.location.href = './blog.html';
             });
             del.addEventListener('click', async (e) => {
-                e.stopPropagation(); 
+                e.stopPropagation();
                 const confirmed = confirm("Are you sure you want to delete this post?");
                 if (!confirmed) return;
 
@@ -279,13 +287,21 @@
                     }
 
                     alert("Post deleted successfully!");
-                    fetchMyPosts(); 
+                    fetchMyPosts();
                 } catch (err) {
                     console.error(err);
                     alert("Error deleting post.");
                 }
             }); outer.appendChild(container);
             postContainer.appendChild(outer);
+
+            edit.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const confirmed = confirm("Are you sure you want to edit this post?");
+                if (!confirmed) return;
+                sessionStorage.setItem('selectedPostId', postItem._id);
+                window.location.href = `./editblog.html`;
+            })
         }
     </script>
 </body>
