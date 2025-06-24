@@ -14,7 +14,8 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light  my-0 bg-info">
+    <nav class="navbar navbar-expand-lg navbar-light  my-0 " style="
+            background: linear-gradient(135deg, #b3c7f9, #a58af8, #c087f8, #e6d0fa); ">
         <div class="container-fluid">
 
 
@@ -233,16 +234,18 @@
             ul.setAttribute('aria-labelledby', 'dropdownMenuButton')
 
             const li1 = document.createElement('li')
+            li1.className="d-flex justify-content-center"
             const del = document.createElement('a')
             del.className = 'dropdown-item'
             del.textContent = 'Delete';
-            del.setAttribute('class', 'btn w-100 btn-outline-danger rounded mb-2')
+            del.setAttribute('class', 'btn w-75 btn-outline-danger rounded-4 mb-2 list')
 
             const li2 = document.createElement('li')
+            li2.className="d-flex justify-content-center"
             const edit = document.createElement('a')
             edit.className = 'dropdown-item'
             edit.textContent = 'Edit';
-            edit.setAttribute('class', 'btn w-100 btn-outline-secondary rounded')
+            edit.setAttribute('class', 'btn w-75 btn-outline-secondary rounded-5 list')
 
             li1.appendChild(del)
             li2.appendChild(edit)
@@ -265,7 +268,7 @@
             container.appendChild(cardbody);
             container.appendChild(footer);
 
-            container.addEventListener('click', () => {
+            container.addEventListener('dblclick', () => {
                 sessionStorage.setItem('selectedPostId', postItem._id);
                 window.location.href = './blog.html';
             });

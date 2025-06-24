@@ -17,7 +17,8 @@
   border-radius: 20px;
   cursor: pointer;
 }
-#profileDropdown {
+#profileDropdown,
+.list {
   
   color: #013ca5;
   font-weight: bold;
