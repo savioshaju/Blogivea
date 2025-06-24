@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     <link rel="stylesheet" href="./css/blog.css">
 </head>
@@ -29,11 +30,11 @@
             <h3 id="post-title"></h3>
             <p id="post-description"></p>
         </div>
-        <div class=" bg-success d-flex justify-content-end py-3 px-4 mx-0 row">
+        <div class=" bg-secondary d-flex justify-content-end py-3 px-4 mx-0 row">
 
             <div class="col-6">
-                <button type="button" class="btn btn-white me-2 text-white">
-                    <i class="bi bi-hand-thumbs-up"></i> Like
+                <button type="button" class="btn btn-white me-2 text-white" id="like">
+                    <i class="bi bi-heart"></i> Like
                 </button>
 
                 <button type="button" class="btn btn-white me-2 text-white" id="comment" data-bs-toggle="offcanvas"
@@ -136,7 +137,14 @@
                 const dateObj = new Date(post.createdAt);
                 document.getElementById('post-date').textContent = "Date: " + dateObj.toLocaleDateString()
                 document.getElementById('blogtittle').innerHTML = post.title + "<br>(Blog Summary)";
+                console.log(post.likes)
+                const alreadyLiked = Array.isArray(post.likes) && post.likes.includes(post.username);
 
+                if (alreadyLiked) {
+                    likeButton.classList.remove('text-white')
+                    likeButton.classList.add('text-warning')
+                    likeButton.innerHTML = `<i class="bi bi-heart-fill"></i> Liked`
+                }
             } catch (error) {
                 loadingPost.style.display = 'none';
                 errorPost.style.display = 'block';
@@ -257,8 +265,8 @@
                 const comments = await res.json();
                 console.log('Comments:', comments);
                 if (!res.ok) {
-                commentsBody.innerHTML = comments.message
-                return;
+                    commentsBody.innerHTML = comments.message
+                    return;
 
                 }
                 commentsBody.innerHTML = ''
@@ -327,6 +335,135 @@
         }
 
 
+        async function likePost(postId) {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) throw new Error('No auth token found');
+
+                const res = await fetch(`${apiUrl}/api/posts/like/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await res.json();
+
+                if (res.status === 200) {
+                    console.log('Post liked:');
+                    likeButton.classList.remove('text-white')
+                    likeButton.classList.add('text-warning')
+                    likeButton.innerHTML = `<i class="bi bi-heart-fill"></i> Liked`
+                } else {
+                    console.warn(data.message || 'Like failed');
+                }
+            } catch (err) {
+                console.error('Error liking post:', err.message);
+            }
+        }
+
+        async function unlikePost(postId) {
+            likeButton.disabled = true;
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) throw new Error('No auth token found');
+
+                const res = await fetch(`${apiUrl}/api/posts/unlike/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await res.json();
+
+                if (res.status === 200) {
+                    console.log('Post unliked:');
+                    likeButton.classList.remove('text-warning')
+                    likeButton.classList.add('text-white')
+                    likeButton.innerHTML = `<i class="bi bi-heart"></i> Like`
+                } else {
+                    console.warn(data.message || 'Unlike failed');
+                }
+            } catch (err) {
+                console.error('Error unliking post:', err.message);
+            } finally {
+                likeButton.disabled = false;
+
+            }
+        }
+
+        async function toggleLike(postId) {
+            likeButton.disabled = true;
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) throw new Error('No auth token');
+
+                const [postRes, userRes] = await Promise.all([
+                    fetch(`${apiUrl}/api/posts/${postId}`),
+                    fetch(`${apiUrl}/api/users/profile`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    })
+                ]);
+
+                if (!postRes.ok || !userRes.ok) throw new Error('Failed to fetch post or user');
+
+                const post = await postRes.json();
+                const user = await userRes.json();
+
+                const username = user.username;
+                const alreadyLiked = Array.isArray(post.likes) && post.likes.includes(username);
+
+                if (alreadyLiked) {
+                    await unlikePost(postId);
+                } else {
+                    animateLikeIcon()
+                    await likePost(postId);
+                }
+
+            } catch (err) {
+                console.error('toggleLike error:', err.message || err);
+            }
+            finally {
+                likeButton.disabled = false;
+            }
+        }
+
+        const likeButton = document.getElementById('like');
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!likeButton) {
+                console.warn('Like button not found');
+                return;
+            }
+
+            likeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                const postId = sessionStorage.getItem('selectedPostId');
+                if (!postId) {
+                    console.warn('No post selected');
+                    return;
+                }
+                toggleLike(postId);
+            });
+        });
+
+        function animateLikeIcon() {
+            const icon = document.getElementById('like');
+
+            
+            icon.classList.remove('animate__animated', 'animate__tada');
+            void icon.offsetWidth; 
+
+            
+            icon.classList.add('animate__animated', 'animate__tada');
+
+            setTimeout(() => {
+                icon.classList.remove('animate__animated', 'animate__tada');
+            }, 1000);
+        }
 
     </script>
 
