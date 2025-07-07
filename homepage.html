@@ -9,6 +9,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/homepage.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
 
 </head>
 
@@ -82,83 +83,113 @@
     <div id="post" class=" row g-4"></div>
 
     <script>
+        let allPosts = [];
+
         const loadingPost = document.getElementById('loadingPost');
-            const errorPost = document.getElementById('errorPost');
-            const loadingicon = document.getElementById('loadingicon');
+        const errorPost = document.getElementById('errorPost');
+        const loadingicon = document.getElementById('loadingicon');
+        const searchInput = document.getElementById('search');
+        const postContainer = document.getElementById('post');
+
         async function fetchPosts() {
             try {
-                const post = document.getElementById('post')
                 const res = await fetch(`${apiUrl}/api/posts`);
                 if (!res.ok) {
                     throw new Error(`Failed to fetch posts: ${res.status} ${res.statusText}`);
                 }
-                                const repPosts = await res.json();
-                console.log(repPosts)
-                let noOfPost = 9
-                if (repPosts.length < noOfPost) {
-                    noOfPost = repPosts.length
-                }
-                const posts = shuffleArray(repPosts);
-                loadingPost.classList.add('d-none')
-                function shuffleArray(array) {
-                    const newArray = [...array];
-                    for (let i = newArray.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-                    }
-                    return newArray;
-                }
 
-                for (let i = 0; i < noOfPost ; i++) {
-                    const outer = document.createElement('div')
-                    outer.className = 'col-12 col-md-6 col-lg-4'
-                    const container = document.createElement('div')
-                    container.className = "card px-2 py-1 my-2 mx-auto d-flex border border-success shadow"
-                    container.style.width = '24rem'
-                    container.style.cursor = 'pointer';
-                    const cardbody = document.createElement('div')
-                    cardbody.className = "card-body"
-                    const h5 = document.createElement('h5')
-                    h5.className = 'card-title'
-                    const p = document.createElement('p')
-                    p.className = "card-text"
-                    p.textContent = posts[i].description
-                    h5.textContent = posts[i].title
-                    const footer = document.createElement('div')
-                    footer.className = "card-footer text-muted d-flex justify-content-between"
-                    const userName = document.createElement('span')
-                    const date = document.createElement('span')
-                    userName.textContent = "By : " + posts[i].username
-                    const dateObj = new Date(posts[i].createdAt);
-                    const dateString = dateObj.toLocaleDateString();
-                    const timeString = dateObj.toLocaleTimeString();
-                    date.textContent = "Date: " + dateString + " Time: " + timeString;
-
-                    cardbody.appendChild(h5)
-                    cardbody.appendChild(p)
-
-                    footer.appendChild(userName)
-                    footer.appendChild(date)
-
-                    container.appendChild(cardbody)
-                    container.appendChild(footer)
-                    container.addEventListener('click', () => {
-                        sessionStorage.setItem('selectedPostId', posts[i]._id);
-                        window.location.href = `./blog.html`;
-                    });
-                    outer.appendChild(container)
-                    post.appendChild(outer)
-
-                }
-
+                const repPosts = await res.json();
+                allPosts = shuffleArray(repPosts);
+                loadingPost.classList.add('d-none');
+                renderPosts(allPosts.slice(0, 9));
             } catch (error) {
                 console.error('Error fetching posts:', error);
-
+                errorPost.textContent = "Error loading posts. Please try again.";
+                loadingicon.style.display = 'none';
+                errorPost.style.display = 'block';
             }
         }
 
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function renderPosts(posts) {
+            postContainer.innerHTML = '';
+            posts.forEach(post => {
+                const outer = document.createElement('div');
+                outer.className = 'col-12 col-md-6 col-lg-4';
+
+                const container = document.createElement('div');
+                container.className = "card px-2 py-1 my-2 mx-auto d-flex border border-success shadow";
+                container.style.width = '24rem';
+                container.style.cursor = 'pointer';
+
+                const cardbody = document.createElement('div');
+                cardbody.className = "card-body";
+
+                const h5 = document.createElement('h5');
+                h5.className = 'card-title';
+                h5.textContent = post.title;
+
+                const p = document.createElement('p');
+                p.className = "card-text";
+                p.textContent = post.description;
+
+                const footer = document.createElement('div');
+                footer.className = "card-footer text-muted d-flex justify-content-between";
+
+                const userName = document.createElement('span');
+                userName.textContent = "By : " + post.username;
+
+                const date = document.createElement('span');
+                const dateObj = new Date(post.createdAt);
+                const dateString = dateObj.toLocaleDateString();
+                const timeString = dateObj.toLocaleTimeString();
+                date.textContent = "Date: " + dateString + " Time: " + timeString;
+
+                cardbody.appendChild(h5);
+                cardbody.appendChild(p);
+                footer.appendChild(userName);
+                footer.appendChild(date);
+                container.appendChild(cardbody);
+                container.appendChild(footer);
+
+                container.addEventListener('click', () => {
+                    sessionStorage.setItem('selectedPostId', post._id);
+                    window.location.href = `./blog.html`;
+                });
+
+                outer.appendChild(container);
+                postContainer.appendChild(outer);
+            });
+        }
+
+        const fuseOptions = {
+            keys: ['title', 'description', 'username'],
+            threshold: 0.4,
+        };
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            if (!query) {
+                renderPosts(allPosts.slice(0, 9));
+                return;
+            }
+
+            const fuse = new Fuse(allPosts, fuseOptions);
+            const results = fuse.search(query).map(result => result.item);
+            renderPosts(results);
+        });
+
         fetchPosts();
     </script>
+
 </body>
 
 
