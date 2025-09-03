@@ -16,7 +16,7 @@ else {
 
 (function checkAuthToken() {
   const token = localStorage.getItem('authToken');
-  if (window.location.pathname.includes('loginpage.html')||window.location.pathname.includes('signuppage.html')) return;
+  if (window.location.pathname.includes('loginpage.html') || window.location.pathname.includes('signuppage.html')) return;
   if (!token) return window.location.href = 'loginpage.html';
 
   try {
